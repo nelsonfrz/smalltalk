@@ -283,10 +283,9 @@ const Wheel = ({
       />
       {currentSegmentIndex != null && (
         <p className="text-center text-lg font-bold">
-          {segments[currentSegmentIndex]} ({currentSegmentIndex})
+          {segments[currentSegmentIndex]}
         </p>
       )}
-      Angle: {angle}
     </div>
   );
 };
