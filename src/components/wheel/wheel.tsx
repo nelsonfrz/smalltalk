@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Button } from "../ui/button";
 
 export interface WheelComponentProps {
@@ -46,10 +46,7 @@ const Wheel = ({
   const initialVelocityRef = useRef(initialVelocity);
   const [angle, setAngle] = useState(0);
   const angleRef = useRef(angle);
-  const [timerInterval, setTimerInterval] = useState<ReturnType<
-    typeof setInterval
-  > | null>(null);
-  const timerIntervalRef = useRef(timerInterval);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [spinStart, setSpinStart] = useState<number | null>(null);
   const spinStartRef = useRef(spinStart);
 
@@ -68,8 +65,8 @@ const Wheel = ({
     draw(ctx);
 
     return () => {
-      if (timerInterval) {
-        clearInterval(timerInterval);
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
       }
     };
   }, [
@@ -206,11 +203,7 @@ const Wheel = ({
       spinStartRef.current = now;
       return now;
     });
-    setTimerInterval(() => {
-      const interval = setInterval(onTimerTick, timerDelay);
-      timerIntervalRef.current = interval;
-      return interval;
-    });
+    timerIntervalRef.current = setInterval(onTimerTick, timerDelay);
   }
 
   function calculateVelocity(initialVelocity: number, timeElapsed: number) {
@@ -222,6 +215,10 @@ const Wheel = ({
   }
 
   function onTimerTick() {
+    if (stateRef.current !== "started") {
+      return;
+    }
+
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) {
       throw new Error("No canvas context found");
@@ -249,6 +246,7 @@ const Wheel = ({
         return state;
       });
       clearInterval(timerIntervalRef.current!);
+      timerIntervalRef.current = null;
       onFinished(currentSegmentIndexRef.current!);
     }
   }
