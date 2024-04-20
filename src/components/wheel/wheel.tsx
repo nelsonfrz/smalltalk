@@ -41,7 +41,7 @@ const Wheel = ({
   );
   const currentSegmentIndexRef = useRef(currentSegmentIndex);
   const [initialVelocity, setInitialVelocity] = useState(
-    Math.random() * 50 + 10,
+    Math.random() * 10 + 10,
   );
   const initialVelocityRef = useRef(initialVelocity);
   const [angle, setAngle] = useState(0);
@@ -157,6 +157,7 @@ const Wheel = ({
   ) {
     const value = segments[key];
     ctx.save();
+
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
     ctx.arc(centerX, centerY, size, lastAngle, angle, false);
@@ -165,12 +166,16 @@ const Wheel = ({
     ctx.fillStyle = segColors[key % segColors.length];
     ctx.fill();
     ctx.stroke();
+
     ctx.save();
+
     ctx.translate(centerX, centerY);
     ctx.rotate((lastAngle + angle) / 2);
     ctx.fillStyle = contrastColor;
     ctx.font = `bold ${fontSize} ${fontFamily}`;
     ctx.fillText(value.substring(0, 21), size / 2 + 20, 0);
+
+    ctx.restore();
     ctx.restore();
   }
 
@@ -193,17 +198,30 @@ const Wheel = ({
   }
 
   function start() {
-    setState(() => {
-      const state: WheelState = "started";
-      stateRef.current = state;
-      return state;
-    });
-    setSpinStart(() => {
-      const now = Date.now();
-      spinStartRef.current = now;
-      return now;
-    });
-    timerIntervalRef.current = setInterval(onTimerTick, timerDelay);
+    if (state === "started") {
+      setInitialVelocity((initialVelocity) => {
+        const newInitialVelocity = initialVelocity + Math.PI / 4;
+        initialVelocityRef.current = newInitialVelocity;
+        return newInitialVelocity;
+      });
+      setSpinStart(() => {
+        const now = Date.now();
+        spinStartRef.current = now;
+        return now;
+      });
+    } else if (state === "initial") {
+      setState(() => {
+        const state: WheelState = "started";
+        stateRef.current = state;
+        return state;
+      });
+      setSpinStart(() => {
+        const now = Date.now();
+        spinStartRef.current = now;
+        return now;
+      });
+      timerIntervalRef.current = setInterval(onTimerTick, timerDelay);
+    }
   }
 
   function calculateVelocity(initialVelocity: number, timeElapsed: number) {
@@ -262,9 +280,6 @@ const Wheel = ({
         width={dimension}
         className="cursor-grab"
         height={dimension}
-        style={{
-          pointerEvents: state === "started" ? "none" : "auto",
-        }}
       />
       {currentSegmentIndex != null && (
         <p className="text-center text-lg font-bold">
