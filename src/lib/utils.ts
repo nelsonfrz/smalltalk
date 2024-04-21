@@ -17,3 +17,8 @@ export function getRandomHexColor(): string {
 
   return `#${hexR}${hexG}${hexB}`;
 }
+
+export function getRandomItems<T>(list: T[], n: number): T[] {
+  const shuffledList = list.sort(() => Math.random() - 0.5); // Shuffle the list
+  return shuffledList.slice(0, n); // Return the first n items
+}

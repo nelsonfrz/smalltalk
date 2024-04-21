@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Button } from "../ui/button";
 
 export interface WheelComponentProps {
   segments: string[];
@@ -41,7 +40,7 @@ const Wheel = ({
   );
   const currentSegmentIndexRef = useRef(currentSegmentIndex);
   const [initialVelocity, setInitialVelocity] = useState(
-    Math.random() * 10 + 10,
+    Math.random() * 9 * Math.PI + Math.PI,
   );
   const initialVelocityRef = useRef(initialVelocity);
   const [angle, setAngle] = useState(0);
@@ -55,20 +54,14 @@ const Wheel = ({
   const centerX = size + 20;
   const centerY = size + 20;
   const minAngularVelocity = 0.07;
+  const damping = 0.5;
 
   useEffect(() => {
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) {
       throw new Error("No canvas context found");
     }
-
     draw(ctx);
-
-    return () => {
-      if (timerIntervalRef.current) {
-        clearInterval(timerIntervalRef.current);
-      }
-    };
   }, [
     segments,
     segColors,
@@ -129,7 +122,7 @@ const Wheel = ({
     ctx.beginPath();
     ctx.arc(centerX, centerY, 50, 0, TAU, false);
     ctx.closePath();
-    ctx.fillStyle = "#529dff";
+    ctx.fillStyle = primaryColor;
     ctx.lineWidth = 10;
     ctx.strokeStyle = contrastColor;
     ctx.fill();
@@ -173,7 +166,7 @@ const Wheel = ({
     ctx.rotate((lastAngle + angle) / 2);
     ctx.fillStyle = contrastColor;
     ctx.font = `bold ${fontSize} ${fontFamily}`;
-    ctx.fillText(value.substring(0, 21), size / 2 + 20, 0);
+    ctx.fillText(value.substring(0, 32), size / 2 + 20, 0);
 
     ctx.restore();
     ctx.restore();
@@ -200,7 +193,10 @@ const Wheel = ({
   function start() {
     if (state === "started") {
       setInitialVelocity((initialVelocity) => {
-        const newInitialVelocity = initialVelocity + Math.PI / 4;
+        const newInitialVelocity = Math.min(
+          initialVelocity + Math.PI / 4,
+          10 * Math.PI,
+        );
         initialVelocityRef.current = newInitialVelocity;
         return newInitialVelocity;
       });
@@ -225,7 +221,7 @@ const Wheel = ({
   }
 
   function calculateVelocity(initialVelocity: number, timeElapsed: number) {
-    return initialVelocity * Math.exp(-0.5 * timeElapsed);
+    return initialVelocity * Math.exp(-damping * timeElapsed);
   }
 
   function getTimeElapsed(startTime: number) {
@@ -259,7 +255,7 @@ const Wheel = ({
 
     if (angularVelocity <= minAngularVelocity) {
       setState(() => {
-        const state: WheelState = "finished";
+        const state: WheelState = "initial";
         stateRef.current = state;
         return state;
       });
