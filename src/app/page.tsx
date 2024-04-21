@@ -2,7 +2,7 @@
 
 import Wheel from "@/components/wheel/wheel";
 import Confetti from "react-confetti";
-import { Separator } from "@/components/ui/separator"
+import { Separator } from "@/components/ui/separator";
 
 import { useState } from "react";
 import { useWindowDimensions } from "@/lib/use-window-dimensions";
@@ -28,7 +28,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="mt-8 flex flex-col items-center justify-center">
+    <div className="mt-4 flex flex-col items-center justify-center">
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
         Smalltalk!
       </h1>

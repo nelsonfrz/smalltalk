@@ -268,7 +268,7 @@ const Wheel = ({
   return (
     <div
       ref={wheelRef}
-      className="my-4 flex w-full flex-col justify-center sm:w-[500px]"
+      className="flex w-full flex-col justify-center sm:w-[500px]"
     >
       <canvas
         ref={canvasRef}

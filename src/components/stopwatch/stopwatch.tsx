@@ -23,7 +23,7 @@ export function Stopwatch() {
       </div>
       <div className="flex justify-center gap-4">
         <Button
-          className="w-26"
+          className="w-32"
           variant={isRunning ? "secondary" : "outline"}
           onClick={() => (isRunning ? pause() : start())}
         >
@@ -31,7 +31,7 @@ export function Stopwatch() {
         </Button>
 
         <Button
-          className="w-26"
+          className="w-32"
           variant={"destructive"}
           onClick={() => {
             reset(undefined, false);
