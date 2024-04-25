@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export interface WheelComponentProps {
-  segments: string[];
+  items: string[];
   segColors: string[];
   onFinished: (segmentIndex: number) => void;
   primaryColor?: string;
@@ -19,7 +19,7 @@ export interface WheelComponentProps {
 type WheelState = "initial" | "started" | "finished";
 
 const Wheel = ({
-  segments,
+  items,
   segColors,
   onFinished,
   primaryColor = "black",
@@ -40,7 +40,7 @@ const Wheel = ({
   );
   const currentSegmentIndexRef = useRef(currentSegmentIndex);
   const [initialVelocity, setInitialVelocity] = useState(
-    Math.random() * 9 * Math.PI + Math.PI,
+    Math.random() * 12 * Math.PI + Math.PI,
   );
   const initialVelocityRef = useRef(initialVelocity);
   const [angle, setAngle] = useState(0);
@@ -50,11 +50,11 @@ const Wheel = ({
   const spinStartRef = useRef(spinStart);
 
   const dimension = (size + 20) * 2;
-  const timerDelay = segments.length;
+  const timerDelay = items.length;
   const centerX = size + 20;
   const centerY = size + 20;
   const minAngularVelocity = 0.07;
-  const damping = 0.5;
+  const damping = 0.8;
 
   useEffect(() => {
     const ctx = canvasRef.current?.getContext("2d");
@@ -63,7 +63,7 @@ const Wheel = ({
     }
     draw(ctx);
   }, [
-    segments,
+    items,
     segColors,
     onFinished,
     primaryColor,
@@ -85,10 +85,8 @@ const Wheel = ({
   function updateCurrentSegmentIndex() {
     const change = angleRef.current + Math.PI / 2;
     let i =
-      segments.length -
-      Math.floor((change / (Math.PI * 2)) * segments.length) -
-      1;
-    if (i < 0) i = i + segments.length;
+      items.length - Math.floor((change / (Math.PI * 2)) * items.length) - 1;
+    if (i < 0) i = i + items.length;
 
     setCurrentSegmentIndex(() => {
       currentSegmentIndexRef.current = i;
@@ -103,7 +101,7 @@ const Wheel = ({
   function drawWheel(ctx: CanvasRenderingContext2D) {
     // Draw segments
     let lastAngle = angleRef.current;
-    const segmentsAmount = segments.length;
+    const segmentsAmount = items.length;
     const TAU = Math.PI * 2;
 
     ctx.lineWidth = 1;
@@ -148,7 +146,7 @@ const Wheel = ({
     angle: number,
     ctx: CanvasRenderingContext2D,
   ) {
-    const value = segments[key];
+    const value = items[key];
     ctx.save();
 
     ctx.beginPath();
@@ -279,7 +277,7 @@ const Wheel = ({
       />
       {currentSegmentIndex != null && (
         <p className="text-center text-lg font-bold">
-          {segments[currentSegmentIndex]}
+          {items[currentSegmentIndex]}
         </p>
       )}
     </div>

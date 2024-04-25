@@ -1,5 +1,6 @@
 import { useStopwatch } from "react-timer-hook";
 import { Button } from "../ui/button";
+import { Pause, Play, RotateCcw } from "lucide-react";
 
 export function Stopwatch() {
   const {
@@ -21,23 +22,29 @@ export function Stopwatch() {
         <span>{String(minutes).padStart(2, "0")}</span>:
         <span>{String(seconds).padStart(2, "0")}</span>
       </div>
-      <div className="flex justify-center gap-4">
+      <div className="flex flex-col gap-2">
         <Button
-          className="w-32"
+          className="w-44 flex gap-2"
           variant={isRunning ? "secondary" : "outline"}
           onClick={() => (isRunning ? pause() : start())}
         >
-          {isRunning ? "Pause" : "Start"}
+          {isRunning ? (
+            <Pause className="h-4 w-4" />
+          ) : (
+            <Play className="h-4 w-4" />
+          )}
+          {isRunning ? "Pause stopwatch" : "Start stopwatch"}
         </Button>
 
         <Button
-          className="w-32"
+          className="w-44 flex gap-2"
           variant={"destructive"}
           onClick={() => {
             reset(undefined, false);
           }}
         >
-          Reset
+          <RotateCcw className="h-4 w-4" />
+          Reset stopwatch
         </Button>
       </div>
     </div>
